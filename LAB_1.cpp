@@ -35,6 +35,25 @@ public:
         }
     }
 
+   bool search(const string& target, int& occurrences) const {
+        Node* current = head;
+        int count = 0;
+        int index = -1;
+
+        while (current != nullptr) {
+            if (current->data == target) {
+                if (index == -1) {
+                    index = count; // Save the first index where the word is found
+                }
+                occurrences++; // Increment count for each occurrence
+            }
+            count++;
+            current = current->next;
+        }
+
+        return (index != -1);
+    }
+
    bool printList() const {
     if (head == nullptr) {
         return false;
@@ -66,6 +85,12 @@ public:
         hashTable[index].insert(word);
     }
 
+    int search(const string& word, int& occurrences) {
+        int index = hashFunction(word);
+        occurrences = 0;
+        return (hashTable[index].search(word, occurrences)) ? index : -1;
+    }
+
     void printHashTable() {
     for (int i = 0; i < 7; ++i) {
         cout << "Index " << i + 1 << ": " << endl;
@@ -77,31 +102,24 @@ public:
 };
 
 int main() {
-    const char paragraph[] = "Abc Efg Hij. Klm Opq Rst.Uvw Xyz.";
-    cout << endl << paragraph << endl << endl;
+    string paragraph;
+    cout << "Enter a paragraph: ";
+    getline(cin, paragraph);
 
     HashTable hashTable;
 
-    string word = "";
-    int counter = 0;
-    do {
-        char letter = paragraph[counter];
+    string searchWord;
+    cout << "Enter a word to search in the hash table: ";
+    cin >> searchWord;
 
-        if (letter == ' ' || letter == '\0' || letter == '.') {
-            if (!word.empty()) {
-                hashTable.insert(word);
-                word = "";
-            }
-        } else {
-            word += letter;
-        }
+    int occurrences = 0;
+    int index = hashTable.search(searchWord, occurrences);
 
-        counter++;
-
-    } while (paragraph[counter] != '\0');
-
-    cout << "Printing the hash table:" << endl << endl;
-    hashTable.printHashTable();
+    if (index != -1) {
+        cout << searchWord << " is found in the hash table at index " << index + 1 << " with " << occurrences << " occurrences." << endl;
+    } else {
+        cout << searchWord << " is not found in the hash table." << endl;
+    }
 
     return 0;
 }
