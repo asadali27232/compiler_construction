@@ -13,7 +13,7 @@ const int MAX_TOKENS = 500;
 int currentTokenPosition = 0;
 Token tokenArray[MAX_TOKENS];
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 1024
 
 char buffer1[BUFFER_SIZE];
 char buffer2[BUFFER_SIZE];
@@ -34,7 +34,7 @@ void openFile() {
         cout << "Error opening file!" << endl;
         return;
     } else {
-        cout << "File openned sucessfulluy!" << endl;
+        cout << "File opened successfully!" << endl;
         return;
     }
 }
@@ -43,10 +43,20 @@ void readFile() {
     if (file != nullptr) {
         if (currentBuffer == nullptr || currentBuffer == buffer2) {
             size_t bytesRead = fread(buffer1, 1, BUFFER_SIZE, file);
-            currentBuffer = buffer1;
+            if (bytesRead == 0) {
+                currentBuffer = nullptr; // Reached end of file
+            } else {
+                currentBuffer = buffer1;
+                cout << "Current Buffer is buffer1" << endl;
+            }
         } else {
             size_t bytesRead = fread(buffer2, 1, BUFFER_SIZE, file);
-            currentBuffer = buffer2;
+            if (bytesRead == 0) {
+                currentBuffer = nullptr; // Reached end of file
+            } else {
+                currentBuffer = buffer2;
+                cout << "Current Buffer is buffer2" << endl;
+            }
         }
     }
 }
@@ -69,6 +79,10 @@ bool isDigit(char ch) {
 }
 
 void identifierFinder() {
+    if (currentBuffer == nullptr) {
+        cout << "Returned" << endl;
+        return; // Exit if end of file reached
+    }
     int bufferIndex = 0;
     int lexemeIndex = 0;
 
@@ -109,6 +123,7 @@ void identifierFinder() {
 }
 
 void printTokens() {
+        cout << "Print" << endl;
     for (int i = 0; i < currentTokenPosition; ++i) {
         cout << "Token " << i+1 << ":" << endl;
         cout << "  Name: " << tokenArray[i].name << endl;
@@ -118,11 +133,12 @@ void printTokens() {
 
 int main() {
     openFile();
-    readFile();
-    identifierFinder();
-    printTokens();
+    do {
+        readFile();
+        identifierFinder();
+        printTokens();
+    } while (currentBuffer != nullptr);
     
-    // cout << currentBuffer << endl;
 
     return 0;
 }
