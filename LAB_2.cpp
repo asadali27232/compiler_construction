@@ -78,6 +78,7 @@ bool isDigit(char ch) {
 
 void identifierFinder() {
     if (currentBuffer == nullptr) {
+        cout << "Exited as file ended" << endl;
         return; // Exit if end of file reached
     }
     int bufferIndex = 0;
@@ -117,10 +118,10 @@ void identifierFinder() {
         }
         ch = currentBuffer[bufferIndex];
     }
+    return;
 }
 
 void printTokens() {
-        cout << "Print" << endl;
     for (int i = 0; i < currentTokenPosition; ++i) {
         cout << "Token " << i+1 << ":" << endl;
         cout << "  Name: " << tokenArray[i].name << endl;
@@ -133,8 +134,8 @@ int main() {
     do {
         readFile();
         identifierFinder();
-        printTokens();
     } while (currentBuffer != nullptr);
+    printTokens();
     
 
     return 0;
