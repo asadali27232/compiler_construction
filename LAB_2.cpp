@@ -105,10 +105,6 @@ void identifierFinder() {
                 break;
         }
         ch = currentBuffer[bufferIndex];
-        if (bufferIndex == BUFFER_SIZE - 1) {
-            bufferIndex = 0;
-            readFile();
-        }
     }
 }
 
@@ -126,7 +122,7 @@ int main() {
     identifierFinder();
     printTokens();
     
-    cout << currentBuffer << endl;
+    // cout << currentBuffer << endl;
 
     return 0;
 }
