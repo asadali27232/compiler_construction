@@ -26,8 +26,6 @@ FILE* file = nullptr;
 
 void openFile() {
     char filename[] = "dummy.cpp";
-    // cout << "Enter the file name: ";
-    // cin >> filename;
 
     file = fopen(filename, "rb");
     if (file == nullptr) {
@@ -80,7 +78,6 @@ bool isDigit(char ch) {
 
 void identifierFinder() {
     if (currentBuffer == nullptr) {
-        cout << "Returned" << endl;
         return; // Exit if end of file reached
     }
     int bufferIndex = 0;
