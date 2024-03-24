@@ -1,10 +1,11 @@
-#include<iostream>
+#include <iostream>
 #include <cstring>
 #include <cstdio>
 
 using namespace std;
 
-struct Token {
+struct Token
+{
     string name;
     string type;
 };
@@ -18,40 +19,55 @@ Token tokenArray[MAX_TOKENS];
 char buffer1[BUFFER_SIZE];
 char buffer2[BUFFER_SIZE];
 
-char* currentBuffer = nullptr;
+char *currentBuffer = nullptr;
 
 int state = 0;
 
-FILE* file = nullptr;
+FILE *file = nullptr;
 
-void openFile() {
+void openFile()
+{
     char filename[] = "dummy.cpp";
 
     file = fopen(filename, "rb");
-    if (file == nullptr) {
+    if (file == nullptr)
+    {
         cout << "Error opening file!" << endl;
         return;
-    } else {
+    }
+    else
+    {
         cout << "File opened successfully!" << endl;
         return;
     }
 }
 
-void readFile() {
-    if (file != nullptr) {
-        if (currentBuffer == nullptr || currentBuffer == buffer2) {
+void readFile()
+{
+    if (file != nullptr)
+    {
+        if (currentBuffer == nullptr || currentBuffer == buffer2)
+        {
             size_t bytesRead = fread(buffer1, 1, BUFFER_SIZE, file);
-            if (bytesRead == 0) {
+            if (bytesRead == 0)
+            {
                 currentBuffer = nullptr; // Reached end of file
-            } else {
+            }
+            else
+            {
                 currentBuffer = buffer1;
                 cout << "Current Buffer is buffer1" << endl;
             }
-        } else {
+        }
+        else
+        {
             size_t bytesRead = fread(buffer2, 1, BUFFER_SIZE, file);
-            if (bytesRead == 0) {
+            if (bytesRead == 0)
+            {
                 currentBuffer = nullptr; // Reached end of file
-            } else {
+            }
+            else
+            {
                 currentBuffer = buffer2;
                 cout << "Current Buffer is buffer2" << endl;
             }
@@ -59,7 +75,8 @@ void readFile() {
     }
 }
 
-void tokenGen(string tokenName, string tokenType) {
+void tokenGen(string tokenName, string tokenType)
+{
     Token newToken;
     newToken.name = tokenName;
     newToken.type = tokenType;
@@ -68,16 +85,20 @@ void tokenGen(string tokenName, string tokenType) {
     currentTokenPosition++;
 }
 
-bool isLetter(char ch) {
+bool isLetter(char ch)
+{
     return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
 }
 
-bool isDigit(char ch) {
+bool isDigit(char ch)
+{
     return (ch >= '0' && ch <= '9');
 }
 
-void identifierFinder() {
-    if (currentBuffer == nullptr) {
+void identifierFinder()
+{
+    if (currentBuffer == nullptr)
+    {
         cout << "Exited as file ended" << endl;
         return; // Exit if end of file reached
     }
@@ -87,56 +108,64 @@ void identifierFinder() {
     char ch = currentBuffer[bufferIndex];
     char lexeme[50];
 
-    for (bufferIndex = 0; bufferIndex < BUFFER_SIZE; bufferIndex++) {
-        switch (state) {
-            case 0:
-                if (ch == '_' || isLetter(ch)) {
-                    state = 1;
-                    lexeme[lexemeIndex] = ch;
-                    lexemeIndex++;
-                }
-                break;
+    for (bufferIndex = 0; bufferIndex < BUFFER_SIZE; bufferIndex++)
+    {
+        switch (state)
+        {
+        case 0:
+            if (ch == '_' || isLetter(ch))
+            {
+                state = 1;
+                lexeme[lexemeIndex] = ch;
+                lexemeIndex++;
+            }
+            break;
 
-            case 1:
-                if (ch == '_' || isLetter(ch) || isDigit(ch)) {
-                    state = 1;
-                    lexeme[lexemeIndex] = ch;
-                    lexemeIndex++;
-                } else {
-                    state = 2;
-                }
-                break;
+        case 1:
+            if (ch == '_' || isLetter(ch) || isDigit(ch))
+            {
+                state = 1;
+                lexeme[lexemeIndex] = ch;
+                lexemeIndex++;
+            }
+            else
+            {
+                state = 2;
+            }
+            break;
 
-            case 2:
-                lexeme[lexemeIndex] = '\0';
-                string lexemeString = lexeme;
-                state = 0;
-                bufferIndex--;
-                tokenGen(lexemeString, "id");
-                lexemeIndex = 0; // Reset lexemeIndex for the next identifier
-                break;
+        case 2:
+            lexeme[lexemeIndex] = '\0';
+            string lexemeString = lexeme;
+            state = 0;
+            bufferIndex--;
+            tokenGen(lexemeString, "id");
+            lexemeIndex = 0; // Reset lexemeIndex for the next identifier
+            break;
         }
         ch = currentBuffer[bufferIndex];
     }
     return;
 }
 
-void printTokens() {
-    for (int i = 0; i < currentTokenPosition; ++i) {
-        cout << "Token " << i+1 << ":" << endl;
+void printTokens()
+{
+    for (int i = 0; i < currentTokenPosition; ++i)
+    {
+        cout << "Token " << i + 1 << ":" << endl;
         cout << "  Name: " << tokenArray[i].name << endl;
         cout << "  Type: " << tokenArray[i].type << endl;
     }
 }
 
-int main() {
+int main()
+{
     openFile();
-    do {
+    do
+    {
         readFile();
         identifierFinder();
     } while (currentBuffer != nullptr);
     printTokens();
-    
-
     return 0;
 }
