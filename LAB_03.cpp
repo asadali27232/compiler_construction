@@ -1,4 +1,3 @@
-// LAB 02 with transitiion table
 #include <iostream>
 #include <cstring>
 #include <cstdio>
@@ -50,29 +49,51 @@ void readFile()
         if (currentBuffer == nullptr || currentBuffer == buffer2)
         {
             size_t bytesRead = fread(buffer1, 1, BUFFER_SIZE, file);
-            if (bytesRead == 0)
+            if (bytesRead < BUFFER_SIZE)
             {
-                currentBuffer = nullptr; // Reached end of file
+                if (feof(file))
+                {
+                    currentBuffer = nullptr;
+                    fclose(file);
+                    file = nullptr;
+                }
+                else
+                {
+                    cout << "Error: Could not read the complete buffer. Potential file error." << endl;
+                }
             }
             else
             {
                 currentBuffer = buffer1;
-                cout << "Current Buffer is buffer1" << endl;
             }
         }
         else
         {
             size_t bytesRead = fread(buffer2, 1, BUFFER_SIZE, file);
-            if (bytesRead == 0)
+            if (bytesRead < BUFFER_SIZE)
             {
-                currentBuffer = nullptr; // Reached end of file
+                if (feof(file))
+                {
+                    currentBuffer = nullptr;
+                    fclose(file);
+                    file = nullptr; // Reset the file pointer
+                }
+                else
+                {
+                    // Handle potential read error
+                    cout << "Error: Could not read the complete buffer. Potential file error." << endl;
+                }
             }
             else
             {
                 currentBuffer = buffer2;
-                cout << "Current Buffer is buffer2" << endl;
             }
         }
+    }
+    else
+    {
+        cout << "File not opened!" << endl;
+        currentBuffer = nullptr;
     }
 }
 
@@ -161,13 +182,14 @@ void printTokens()
 
 int main()
 {
+    bool isLastIteration = false;
+
     openFile();
     do
     {
         readFile();
         identifierFinder();
+        printTokens();
     } while (currentBuffer != nullptr);
-    printTokens();
-
     return 0;
 }
