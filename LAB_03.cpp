@@ -1,8 +1,57 @@
 #include <iostream>
-#include <cstring>
-#include <cstdio>
+#include <fstream>
+#include <string>
 
 using namespace std;
+
+bool isLetter(char ch)
+{
+    return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
+}
+
+bool isDigit(char ch)
+{
+    return (ch >= '0' && ch <= '9');
+}
+
+enum TokenType
+{
+    N = 0,
+    ID,
+    OP,
+    KEY,
+    LIT,
+    PUN
+};
+
+enum ColumnType
+{
+    L = 0,
+    U,
+    D,
+    NLDU,
+    A,
+    R,
+    T
+};
+
+ColumnType getColumnType(char ch)
+{
+    if (isLetter(ch))
+        return L;
+    if (isDigit(ch))
+        return D;
+    if (ch == '_')
+        return U;
+    else
+        return NLDU;
+}
+
+int TT[3][7] = {
+    {1, 1, -1, -1, false, false, N},
+    {1, 1, 1, 2, false, false, N},
+    {0, 0, 0, 0, true, true, ID},
+};
 
 struct Token
 {
@@ -16,78 +65,47 @@ Token tokenArray[MAX_TOKENS];
 
 #define BUFFER_SIZE 1024
 
-char buffer1[BUFFER_SIZE];
-char buffer2[BUFFER_SIZE];
+char buffer[BUFFER_SIZE];
 
 char *currentBuffer = nullptr;
 
 int state = 0;
 
-FILE *file = nullptr;
+ifstream file;
 
-void openFile()
+bool openFile(const string &filename)
 {
-    char filename[] = "dummy.cpp";
-
-    file = fopen(filename, "rb");
-    if (file == nullptr)
+    file.open(filename);
+    if (!file.is_open())
     {
         cout << "Error opening file!" << endl;
-        return;
+        return false;
     }
-    else
-    {
-        cout << "File opened successfully!" << endl;
-        return;
-    }
+    cout << "File opened successfully!" << endl;
+    return true;
 }
 
 void readFile()
 {
-    if (file != nullptr)
+    if (file.is_open())
     {
-        if (currentBuffer == nullptr || currentBuffer == buffer2)
+        file.read(buffer, BUFFER_SIZE);
+        streamsize bytesRead = file.gcount();
+        if (bytesRead < BUFFER_SIZE)
         {
-            size_t bytesRead = fread(buffer1, 1, BUFFER_SIZE, file);
-            if (bytesRead < BUFFER_SIZE)
+            if (file.eof())
             {
-                if (feof(file))
-                {
-                    currentBuffer = nullptr;
-                    fclose(file);
-                    file = nullptr;
-                }
-                else
-                {
-                    cout << "Error: Could not read the complete buffer. Potential file error." << endl;
-                }
+                currentBuffer = nullptr;
+                file.close();
             }
             else
             {
-                currentBuffer = buffer1;
+                cout << "Error: Could not read the complete buffer. Potential file error." << endl;
             }
         }
         else
         {
-            size_t bytesRead = fread(buffer2, 1, BUFFER_SIZE, file);
-            if (bytesRead < BUFFER_SIZE)
-            {
-                if (feof(file))
-                {
-                    currentBuffer = nullptr;
-                    fclose(file);
-                    file = nullptr; // Reset the file pointer
-                }
-                else
-                {
-                    // Handle potential read error
-                    cout << "Error: Could not read the complete buffer. Potential file error." << endl;
-                }
-            }
-            else
-            {
-                currentBuffer = buffer2;
-            }
+            currentBuffer = buffer;
         }
     }
     else
@@ -97,24 +115,18 @@ void readFile()
     }
 }
 
-void tokenGen(string tokenName, string tokenType)
+void tokenGen(const string &tokenName, const string &tokenType)
 {
-    Token newToken;
-    newToken.name = tokenName;
-    newToken.type = tokenType;
-
-    tokenArray[currentTokenPosition] = newToken;
-    currentTokenPosition++;
-}
-
-bool isLetter(char ch)
-{
-    return ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'));
-}
-
-bool isDigit(char ch)
-{
-    return (ch >= '0' && ch <= '9');
+    if (currentTokenPosition < MAX_TOKENS)
+    {
+        tokenArray[currentTokenPosition].name = tokenName;
+        tokenArray[currentTokenPosition].type = tokenType;
+        currentTokenPosition++;
+    }
+    else
+    {
+        cout << "Maximum token limit reached!" << endl;
+    }
 }
 
 void identifierFinder()
@@ -122,52 +134,35 @@ void identifierFinder()
     if (currentBuffer == nullptr)
     {
         cout << "Exited as file ended" << endl;
-        return; // Exit if end of file reached
+        return;
     }
-    int bufferIndex = 0;
+
     int lexemeIndex = 0;
 
-    char ch = currentBuffer[bufferIndex];
-    char lexeme[50];
-
-    for (bufferIndex = 0; bufferIndex < BUFFER_SIZE; bufferIndex++)
+    for (int bufferIndex = 0; bufferIndex < BUFFER_SIZE; bufferIndex++)
     {
-        switch (state)
+        char ch = currentBuffer[bufferIndex];
+        state = TT[state][getColumnType(ch)];
+        if (!TT[state][A])
         {
-        case 0:
-            if (ch == '_' || isLetter(ch))
-            {
-                state = 1;
-                lexeme[lexemeIndex] = ch;
-                lexemeIndex++;
-            }
-            break;
-
-        case 1:
-            if (ch == '_' || isLetter(ch) || isDigit(ch))
-            {
-                state = 1;
-                lexeme[lexemeIndex] = ch;
+            if (lexemeIndex < 50)
+            { // Ensure not to exceed lexeme array size
+                tokenArray[currentTokenPosition].name += ch;
                 lexemeIndex++;
             }
             else
             {
-                state = 2;
+                cout << "Lexeme length exceeded limit!" << endl;
+                return;
             }
-            break;
-
-        case 2:
-            lexeme[lexemeIndex] = '\0';
-            string lexemeString = lexeme;
-            state = 0;
-            bufferIndex--;
-            tokenGen(lexemeString, "id");
-            lexemeIndex = 0; // Reset lexemeIndex for the next identifier
-            break;
         }
-        ch = currentBuffer[bufferIndex];
+        else
+        {
+            tokenGen(tokenArray[currentTokenPosition].name, "ID");
+            tokenArray[currentTokenPosition].name.clear(); // Clear the token name for the next token
+            lexemeIndex = 0;
+        }
     }
-    return;
 }
 
 void printTokens()
@@ -182,14 +177,19 @@ void printTokens()
 
 int main()
 {
-    bool isLastIteration = false;
+    string filename = "dummy.cpp";
 
-    openFile();
+    if (!openFile(filename))
+    {
+        return 1;
+    }
+
     do
     {
         readFile();
         identifierFinder();
         printTokens();
     } while (currentBuffer != nullptr);
+
     return 0;
 }
