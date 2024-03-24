@@ -4,145 +4,155 @@ This is the first comment.
 int a = 5;
 
 /*
-Here's the second comment.
+This is the second comment.
 */
 int b = 10;
 
 /*
 This is the third comment.
 */
-int sum = a + b;
+int c = 15;
 
 /*
-Here's the fourth comment.
+This is the fourth comment.
 */
-int product = a * b;
+int d = 20;
 
 /*
 This is the fifth comment.
 */
-int difference = a - b;
+int e = 25;
 
 /*
-Here's the sixth comment.
+This is the sixth comment.
 */
-int quotient = a / b;
+int f = 30;
 
 /*
 This is the seventh comment.
 */
-int remainder = a % b;
+int g = 35;
 
 /*
-Here's the eighth comment.
+This is the eighth comment.
 */
-int result = sum + product;
+int h = 40;
 
 /*
 This is the ninth comment.
 */
-int result2 = difference - quotient;
+int i = 45;
 
 /*
-Here's the tenth comment.
+This is the tenth comment.
 */
-int result3 = result + result2;
+int j = 50;
 
 /*
 This is the eleventh comment.
 */
-int result4 = result3 * remainder;
+int k = 55;
 
 /*
-Here's the twelfth comment.
+This is the twelfth comment.
 */
-int result5 = result4 / 2;
+int l = 60;
 
 /*
 This is the thirteenth comment.
 */
-int result6 = result5 % 3;
+int m = 65;
 
 /*
-Here's the fourteenth comment.
+This is the fourteenth comment.
 */
-int result7 = result6 + 1;
+int n = 70;
 
 /*
 This is the fifteenth comment.
 */
-int result8 = result7 - 2;
+int o = 75;
 
 /*
-Here's the sixteenth comment.
+This is the sixteenth comment.
 */
-int result9 = result8 * 5;
+int p = 80;
 
 /*
 This is the seventeenth comment.
 */
-int result10 = result9 / 10;
+int q = 85;
 
 /*
-Here's the eighteenth comment.
+This is the eighteenth comment.
 */
-int result11 = result10 % 2;
+int r = 90;
 
 /*
 This is the nineteenth comment.
 */
-int result12 = result11 + 3;
+int s = 95;
 
 /*
-Here's the twentieth comment.
+This is the twentieth comment.
 */
-int result13 = result12 - 4;
+int t = 100;
+
 /*
 This is the twenty-first comment.
 */
-int result14 = result13 * 2;
+int u = 105;
 
 /*
-Here's the twenty-second comment.
+This is the twenty-second comment.
 */
-int result15 = result14 / 3;
+int v = 110;
 
 /*
 This is the twenty-third comment.
 */
-int result16 = result15 % 4;
+int w = 115;
 
 /*
-Here's the twenty-fourth comment.
+This is the twenty-fourth comment.
 */
-int result17 = result16 + 5;
+int x = 120;
 
 /*
 This is the twenty-fifth comment.
 */
-int result18 = result17 - 6;
+int y = 125;
 
 /*
-Here's the twenty-sixth comment.
+This is the twenty-sixth comment.
 */
-int result19 = result18 * 7;
+int z = 130;
 
 /*
 This is the twenty-seventh comment.
 */
-int result20 = result19 / 8;
+int aa = 135;
 
 /*
-Here's the twenty-eighth comment.
+This is the twenty-eighth comment.
 */
-int result21 = result20 % 9;
+int bb = 140;
 
 /*
 This is the twenty-ninth comment.
 */
-int result22 = result21 + 10;
+int cc = 145;
 
 /*
-Here's the thirtieth comment.
+This is the thirtieth comment.
 */
-int result23 = result22 - 11;
+int dd = 150;
+/*
+This is the thirty-first comment.
+*/
+int ee = 155;
+
+/*
+This is the thirty-second comment.
+*/
+int ff = 160;

@@ -58,7 +58,7 @@ struct Token
     string type;
 };
 
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 512
 
 char buffer1[BUFFER_SIZE];
 char buffer2[BUFFER_SIZE];
@@ -90,6 +90,7 @@ void readFile()
     {
         if (currentBuffer == nullptr || currentBuffer == buffer2)
         {
+            cout << "Reading buffer 1..." << endl;
             size_t bytesRead = fread(buffer1, 1, BUFFER_SIZE, file);
             if (bytesRead < BUFFER_SIZE)
             {
@@ -111,7 +112,9 @@ void readFile()
         }
         else
         {
+
             size_t bytesRead = fread(buffer2, 1, BUFFER_SIZE, file);
+            cout << "Reading buffer 2..." << endl;
             if (bytesRead < BUFFER_SIZE)
             {
                 if (feof(file))
@@ -167,7 +170,6 @@ int main()
 
     do
     {
-        cout << "Reading file..." << endl;
         readFile();
         printMultiLineComment();
     } while (currentBuffer != nullptr);
