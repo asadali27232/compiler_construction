@@ -213,6 +213,39 @@ public:
                 first = NULL;
                 last = NULL;
         }
+        // Remove null productions from CFG
+        void removeNullProductions()
+        {
+                Production *p = first;
+                while (p != NULL)
+                {
+                        Rule *r = p->first;
+                        Rule *rprev = NULL;
+                        while (r != NULL)
+                        {
+                                if (*r->r == "null")
+                                {
+                                        if (rprev == NULL)
+                                        {
+                                                p->first = r->next;
+                                        }
+                                        else
+                                        {
+                                                rprev->next = r->next;
+                                        }
+                                        delete r->r;
+                                        delete r;
+                                        r = rprev->next;
+                                }
+                                else
+                                {
+                                        rprev = r;
+                                        r = r->next;
+                                }
+                        }
+                        p = p->next;
+                }
+        }
         void print()
         {
                 Production *p = first;
@@ -244,6 +277,5 @@ int main()
         cfg.removeProduction("S");
         cfg.print();
 
-        
-        return 0;
+                return 0;
 }
