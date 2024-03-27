@@ -240,5 +240,10 @@ int main()
         cfg.addRule("S", "bSa");
         cfg.addRule("S", "ba");
         cfg.print();
+
+        cfg.removeProduction("S");
+        cfg.print();
+
+        
         return 0;
 }
