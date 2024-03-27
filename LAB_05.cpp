@@ -125,6 +125,94 @@ public:
                         p = p->next;
                 }
         }
+        // Delete a prodcution and all its rules
+        void deleteProduction(string name)
+        {
+                Production *p = first;
+                Production *prev = NULL;
+                while (p != NULL)
+                {
+                        if (p->name == name)
+                        {
+                                Rule *r = p->first;
+                                Rule *rprev = NULL;
+                                while (r != NULL)
+                                {
+                                        Rule *temp = r;
+                                        r = r->next;
+                                        delete temp->r;
+                                        delete temp;
+                                }
+                                if (prev == NULL)
+                                {
+                                        first = p->next;
+                                }
+                                else
+                                {
+                                        prev->next = p->next;
+                                }
+                                delete p;
+                                return;
+                        }
+                        prev = p;
+                        p = p->next;
+                }
+        }
+        // Delete a rule from all productions
+        void deleteRule(string rule)
+        {
+                Production *p = first;
+                while (p != NULL)
+                {
+                        Rule *r = p->first;
+                        Rule *prev = NULL;
+                        while (r != NULL)
+                        {
+                                if (*r->r == rule)
+                                {
+                                        if (prev == NULL)
+                                        {
+                                                p->first = r->next;
+                                        }
+                                        else
+                                        {
+                                                prev->next = r->next;
+                                        }
+                                        delete r->r;
+                                        delete r;
+                                        r = prev->next;
+                                }
+                                else
+                                {
+                                        prev = r;
+                                        r = r->next;
+                                }
+                        }
+                        p = p->next;
+                }
+        }
+        // Delete a CFG
+        void deleteCFG()
+        {
+                Production *p = first;
+                while (p != NULL)
+                {
+                        Rule *r = p->first;
+                        Rule *rprev = NULL;
+                        while (r != NULL)
+                        {
+                                Rule *temp = r;
+                                r = r->next;
+                                delete temp->r;
+                                delete temp;
+                        }
+                        Production *temp = p;
+                        p = p->next;
+                        delete temp;
+                }
+                first = NULL;
+                last = NULL;
+        }
         void print()
         {
                 Production *p = first;
